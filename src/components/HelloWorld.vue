@@ -1,59 +1,122 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
-  </div>
-</template>
 
+  <v-container>
+    <h1>Lista de proyectos</h1>
+     <v-data-table
+     :headers="headers"
+     :search="search"
+     :items="proyects"
+     >
+      <template v-slot:top >
+       <v-toolbar flat color="white">
+        <v-text-field v-model="search" label="Buscar" single-line class="mr-4"></v-text-field>
+        <v-btn
+        color="blue"
+        @click="add"
+        >nuevo
+        </v-btn>
+      </v-toolbar>
+      </template>
+
+      <template v-slot:item.actions="{ item }">
+        <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                        icon
+                        v-bind="attrs"
+                        v-on="on"
+                        color="blue"
+                >
+                    <v-icon
+                            small
+                            class="detailIcon mr-2"
+                            @click="show(item)"
+                    >
+                        mdi-eye
+                    </v-icon>
+                </v-btn>
+            </template>
+            <span>Detalles</span>
+        </v-tooltip>
+               
+        <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                        icon
+                        v-bind="attrs"
+                        v-on="on"
+                        color="yellow"
+                >
+                    <v-icon
+                            small
+                            class="editIcon mr-2"
+                    >
+                        mdi-pencil
+                    </v-icon>
+                </v-btn>
+            </template>
+            <span>Editar</span>
+            
+        </v-tooltip>
+               
+    <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+              icon
+              v-bind="attrs"
+              v-on="on"
+              color="red"
+              >
+             <v-icon>
+              mdi-delete
+              </v-icon>
+          </v-btn>
+        </template>
+        <span>Eliminar</span>
+        </v-tooltip>
+      </template>
+
+     </v-data-table>
+     
+     <v-card-actions class="px-3 pb-3">
+       <v-flex-text-xs-right>
+       <v-btn >
+       Dark
+     </v-btn>
+     </v-flex-text-xs-right>
+      </v-card-actions>
+  </v-container>
+</template>
 <script>
+import {mapActions,mapMutations,mapState} from 'vuex';
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  data(){
+    return{
+      headers:[{text:"id", value:"id"},
+              {text:"Nombre", value:"nombre"},
+              {text:"Fecha",value:"fecha"},
+              {text:"Hora", value:"hora"},
+              {text:"Prioridad", value:"prioridad"},
+              {text:"Materia", value:"materia"},
+              {text:"Acciones", value: "actions",sortable :false}],
+        search:""
+    }
+  },
+  computed:{
+        ...mapState("proyects", ["proyects"])
+},
+methods:{
+        ...mapActions("proyects", ["getProyects"]),
+        ...mapMutations("proyects",["setCurrentProyects"]),
+    add(){
+      console.log("Crar nuevo proyecto")
+    },
+    show(proyect){
+      console.log(proyect)
+    }
+},
+  mounted(){
+    this.getProyects()
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
